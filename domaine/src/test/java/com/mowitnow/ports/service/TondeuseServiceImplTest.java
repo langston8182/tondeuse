@@ -2,6 +2,7 @@ package com.mowitnow.ports.service;
 
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.LimiteTondeuseException;
 import com.mowitnow.exceptions.UtilisationException;
 import com.mowitnow.ports.spi.TondeusePersistence;
 import org.junit.Test;
@@ -10,7 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.mowitnow.data.OrientationEnum.EAST;
+import static com.mowitnow.data.DirectionEnum.DROITE;
+import static com.mowitnow.data.DirectionEnum.GAUCHE;
+import static com.mowitnow.data.OrientationEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
@@ -80,6 +83,174 @@ public class TondeuseServiceImplTest {
     TondeuseDTO mut = sut.recupererTondeuse(1L);
 
     assertThat(mut).isEqualTo(tondeuseDTO);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionEastGauche() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId();
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, GAUCHE);
+
+    assertThat(mut.getOrientation()).isEqualTo(NORTH);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionNorthGauche() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(NORTH);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, GAUCHE);
+
+    assertThat(mut.getOrientation()).isEqualTo(WEST);
+  }
+
+
+  @Test
+  public void pivoterTondeuse_PositionSouthGauche() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(SOUTH);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, GAUCHE);
+
+    assertThat(mut.getOrientation()).isEqualTo(EAST);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionWestGauche() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(WEST);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, GAUCHE);
+
+    assertThat(mut.getOrientation()).isEqualTo(SOUTH);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionNorthDroite() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(NORTH);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, DROITE);
+
+    assertThat(mut.getOrientation()).isEqualTo(EAST);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionEastDroite() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(EAST);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, DROITE);
+
+    assertThat(mut.getOrientation()).isEqualTo(SOUTH);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionSouthDroite() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(SOUTH);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, DROITE);
+
+    assertThat(mut.getOrientation()).isEqualTo(WEST);
+  }
+
+  @Test
+  public void pivoterTondeuse_PositionWestDroite() {
+    TondeuseDTO tondeuseDto = creerTondeuseAvecId()
+            .setOrientation(WEST);
+
+    TondeuseDTO mut = sut.pivoterTondeuse(tondeuseDto, DROITE);
+
+    assertThat(mut.getOrientation()).isEqualTo(NORTH);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientatiomNorth2Cases() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(NORTH);
+
+    TondeuseDTO mut = sut.avancerTondeuse(tondeuseDTO, 2);
+
+    assertThat(mut.getPosY()).isEqualTo(4);
+    assertThat(mut.getPosX()).isEqualTo(1);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationNorthHorsLimite_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(NORTH);
+
+    Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 3));
+
+    assertThat(throwable).isNotNull()
+            .isExactlyInstanceOf(LimiteTondeuseException.class);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationSouth2Cases() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(SOUTH);
+
+    TondeuseDTO mut = sut.avancerTondeuse(tondeuseDTO, 2);
+
+    assertThat(mut.getPosY()).isEqualTo(0);
+    assertThat(mut.getPosX()).isEqualTo(1);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationSouthHorsLimite_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(SOUTH);
+
+    Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 3));
+
+    assertThat(throwable).isNotNull()
+            .isExactlyInstanceOf(LimiteTondeuseException.class);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationEast3Cases() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(EAST);
+
+    TondeuseDTO mut = sut.avancerTondeuse(tondeuseDTO, 3);
+
+    assertThat(mut.getPosX()).isEqualTo(4);
+    assertThat(mut.getPosY()).isEqualTo(2);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationEastHorsLimite_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(NORTH);
+
+    Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 4));
+
+    assertThat(throwable).isNotNull()
+            .isExactlyInstanceOf(LimiteTondeuseException.class);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationWest1Cases() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(WEST);
+
+    TondeuseDTO mut = sut.avancerTondeuse(tondeuseDTO, 1);
+
+    assertThat(mut.getPosX()).isEqualTo(0);
+    assertThat(mut.getPosY()).isEqualTo(2);
+  }
+
+  @Test
+  public void avancerTondeuse_OrientationWestHorsLimite_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId()
+            .setOrientation(WEST);
+
+    Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 2));
+
+    assertThat(throwable).isNotNull()
+            .isExactlyInstanceOf(LimiteTondeuseException.class);
   }
 
   private TondeuseDTO creerTondeuse() {
