@@ -59,15 +59,16 @@ public class TondeuseServiceImpl implements TondeuseService {
 
     tondeuseDTO.setPosX(nouvellePosX);
     tondeuseDTO.setPosY(nouvellePosY);
-    return tondeuseDTO;
+    return tondeusePersistence.modifierTondeuse(tondeuseDTO);
   }
 
   @Override
   public TondeuseDTO pivoterTondeuse(TondeuseDTO tondeuseDTO, DirectionEnum direction) {
     OrientationEnum orientationEnum = tondeuseDTO.getOrientation();
     int nouvelleValeur = recupererNouvelleValeur(direction, orientationEnum);
-    return tondeuseDTO
-            .setOrientation(OrientationEnum.recupererOrientationParValeur(nouvelleValeur));
+    TondeuseDTO tondeuseDtoModifiee = tondeuseDTO
+            .setOrientation(recupererOrientationParValeur(nouvelleValeur));
+    return tondeusePersistence.modifierTondeuse(tondeuseDtoModifiee);
   }
 
   @Override
