@@ -14,4 +14,5 @@ public class TondeuseDTO {
   private int posX;
   private int posY;
   private OrientationEnum orientation;
+  private GrilleDTO grilleDTO;
 }

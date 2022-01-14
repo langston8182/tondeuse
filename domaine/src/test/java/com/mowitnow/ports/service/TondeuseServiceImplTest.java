@@ -1,6 +1,8 @@
 package com.mowitnow.ports.service;
 
+import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.UtilisationException;
 import com.mowitnow.ports.spi.TondeusePersistence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +12,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static com.mowitnow.data.OrientationEnum.EAST;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TondeuseServiceImplTest {
@@ -37,8 +39,30 @@ public class TondeuseServiceImplTest {
   }
 
   @Test
+  public void initialiserTondeuse_DepasseZoneX_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId();
+    tondeuseDTO.setPosX(6);
+
+    Throwable throwable = catchThrowable(() -> sut.initialiserTondeuse(tondeuseDTO));
+
+    assertThat(throwable).isNotNull()
+      .isInstanceOf(UtilisationException.class);
+  }
+
+  @Test
+  public void initialiserTondeuse_DepasseZoneY_LanceErreur() {
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId();
+    tondeuseDTO.setPosY(6);
+
+    Throwable throwable = catchThrowable(() -> sut.initialiserTondeuse(tondeuseDTO));
+
+    assertThat(throwable).isNotNull()
+      .isInstanceOf(UtilisationException.class);
+  }
+
+  @Test
   public void modifierTondeuse_Nominal() {
-    TondeuseDTO tondeuseDTO = creerTondeuse();
+    TondeuseDTO tondeuseDTO = creerTondeuseAvecId();
     given(tondeusePersistence.modifierTondeuse(tondeuseDTO))
       .willReturn(tondeuseDTO);
 
@@ -59,10 +83,19 @@ public class TondeuseServiceImplTest {
   }
 
   private TondeuseDTO creerTondeuse() {
+    GrilleDTO grilleDTO = creerGrilleDto();
     return new TondeuseDTO()
       .setOrientation(EAST)
       .setPosX(1)
-      .setPosY(2);
+      .setPosY(2)
+      .setGrilleDTO(grilleDTO);
+  }
+
+  private GrilleDTO creerGrilleDto() {
+    return new GrilleDTO()
+      .setDimX(5)
+      .setDimY(5)
+      .setId(1L);
   }
 
   private TondeuseDTO creerTondeuseAvecId() {
