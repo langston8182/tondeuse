@@ -11,8 +11,8 @@ public enum OrientationEnum {
     SOUTH("S", 180),
     WEST("W", 270);
 
-    private String orientation;
-    private int valeur;
+    private final String orientation;
+    private final int valeur;
 
     OrientationEnum(String orientation, int valeur) {
         this.orientation = orientation;
