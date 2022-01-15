@@ -4,10 +4,7 @@ import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.ports.api.GrilleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/grille")
@@ -19,7 +16,10 @@ public class GrilleController {
     }
 
     @PostMapping
-    public ResponseEntity<GrilleDTO> initialiserGrille(@RequestBody GrilleDTO grilleDTO) {
+    public ResponseEntity<GrilleDTO> initialiserGrille(@RequestParam int posX, @RequestParam int posY) {
+        GrilleDTO grilleDTO = new GrilleDTO()
+                .setDimX(posX + 1)
+                .setDimY(posY + 1);
         GrilleDTO resultat = grilleService.initialiserGrille(grilleDTO);
         return new ResponseEntity<>(resultat, HttpStatus.CREATED);
     }

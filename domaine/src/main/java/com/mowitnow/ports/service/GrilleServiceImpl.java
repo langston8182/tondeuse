@@ -1,8 +1,11 @@
 package com.mowitnow.ports.service;
 
 import com.mowitnow.data.GrilleDTO;
+import com.mowitnow.exceptions.GrilleNonTrouveeException;
 import com.mowitnow.ports.api.GrilleService;
 import com.mowitnow.ports.spi.GrillePersistence;
+
+import static java.util.Optional.ofNullable;
 
 public class GrilleServiceImpl implements GrilleService {
   private final GrillePersistence grillePersistence;
@@ -18,6 +21,7 @@ public class GrilleServiceImpl implements GrilleService {
 
   @Override
   public GrilleDTO recupererGrille(Long id) {
-    return grillePersistence.recupererGrille(id);
+    return ofNullable(grillePersistence.recupererGrille(id))
+            .orElseThrow(() -> new GrilleNonTrouveeException("Grille non trouvée"));
   }
 }

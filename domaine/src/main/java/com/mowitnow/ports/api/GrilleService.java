@@ -1,6 +1,7 @@
 package com.mowitnow.ports.api;
 
 import com.mowitnow.data.GrilleDTO;
+import com.mowitnow.exceptions.GrilleNonTrouveeException;
 
 /**
  * Service pour la gestion d'une grille rectangulaire de tonte.
@@ -19,7 +20,8 @@ public interface GrilleService {
    * Récupère une grille selon son identifiant.
    *
    * @param id L'identifiant de la grille
+   * @throws GrilleNonTrouveeException Si la grille n'à pas été trouvée.
    * @return La grille récupérée
    */
-  GrilleDTO recupererGrille(Long id);
+  GrilleDTO recupererGrille(Long id) throws GrilleNonTrouveeException;
 }

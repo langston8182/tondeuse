@@ -40,6 +40,6 @@ public class TondeuseJpaAdapter implements TondeusePersistence {
     public TondeuseDTO recupererTondeuse(Long id) {
         return tondeuseRepository.findById(id)
                 .map(tondeuseMapper::mapVersTondeuseDto)
-                .orElse(new TondeuseDTO());
+                .orElse(null);
     }
 }

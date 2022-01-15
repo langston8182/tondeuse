@@ -2,8 +2,8 @@ package com.mowitnow.ports.api;
 
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.TondeuseDTO;
-import com.mowitnow.exceptions.LimiteTondeuseException;
-import com.mowitnow.exceptions.UtilisationException;
+import com.mowitnow.exceptions.TondeuseLimiteException;
+import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 
 /**
  * Service de gestion d'une tondeuse;
@@ -14,10 +14,10 @@ public interface TondeuseService {
    *
    * @param tondeuseDTO La tondeuse à initialiser.
    *
-   * @throws UtilisationException Erreur si la tondeuse dépasse la zone de tonte.
+   * @throws TondeuseLimiteException Erreur si la tondeuse dépasse la zone de tonte.
    * @return La tondeuse initialisée avec une position et une orientation.
    */
-  TondeuseDTO initialiserTondeuse(TondeuseDTO tondeuseDTO) throws UtilisationException;
+  TondeuseDTO initialiserTondeuse(TondeuseDTO tondeuseDTO) throws TondeuseLimiteException;
 
   /**
    * Modifiation la position et l'orientation de la tondeuse.
@@ -36,9 +36,9 @@ public interface TondeuseService {
    *
    * @return La nouvelle position de la tondeuse.
    *
-   * @throws LimiteTondeuseException Erreur si la tondeuse dépasse la limite de la grille
+   * @throws TondeuseLimiteException Erreur si la tondeuse dépasse la limite de la grille
    */
-  TondeuseDTO avancerTondeuse(TondeuseDTO tondeuseDTO, int nombreCase) throws LimiteTondeuseException;
+  TondeuseDTO avancerTondeuse(TondeuseDTO tondeuseDTO, int nombreCase) throws TondeuseLimiteException;
 
   /**
    * Pivote la tondeuse à droite ou à gauche.
@@ -55,7 +55,8 @@ public interface TondeuseService {
    *
    * @param id L'identifiant de la tondeuse
    *
+   * @throws TondeuseNonTrouveeException Si la tondeuse n'à pas été trouvée.
    * @return Les informations de la tondeuse (position et orientation).
    */
-  TondeuseDTO recupererTondeuse(Long id);
+  TondeuseDTO recupererTondeuse(Long id) throws TondeuseNonTrouveeException;
 }

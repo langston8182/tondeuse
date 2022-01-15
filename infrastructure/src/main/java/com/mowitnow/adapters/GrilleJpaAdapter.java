@@ -34,6 +34,6 @@ public class GrilleJpaAdapter implements GrillePersistence {
   public GrilleDTO recupererGrille(Long id) {
     return grilleRepository.findById(id)
             .map(grilleMapper::mapVersGrilleDto)
-            .orElse(new GrilleDTO());
+            .orElse(null);
   }
 }

@@ -3,13 +3,14 @@ package com.mowitnow.ports.service;
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.OrientationEnum;
 import com.mowitnow.data.TondeuseDTO;
-import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.exceptions.TondeuseLimiteException;
+import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.exceptions.UtilisationException;
 import com.mowitnow.ports.api.TondeuseService;
 import com.mowitnow.ports.spi.TondeusePersistence;
 
-import static com.mowitnow.data.DirectionEnum.GAUCHE;
 import static com.mowitnow.data.OrientationEnum.*;
+import static java.util.Optional.ofNullable;
 
 public class TondeuseServiceImpl implements TondeuseService {
   private final TondeusePersistence tondeusePersistence;
@@ -31,7 +32,7 @@ public class TondeuseServiceImpl implements TondeuseService {
   }
 
   @Override
-  public TondeuseDTO avancerTondeuse(TondeuseDTO tondeuseDTO, int nombreCase) throws LimiteTondeuseException {
+  public TondeuseDTO avancerTondeuse(TondeuseDTO tondeuseDTO, int nombreCase) throws TondeuseLimiteException {
     int nouvellePosX = tondeuseDTO.getPosX();
     int nouvellePosY = tondeuseDTO.getPosY();
 
@@ -54,7 +55,7 @@ public class TondeuseServiceImpl implements TondeuseService {
     }
 
     if (estHorsLimite(tondeuseDTO, nouvellePosX, nouvellePosY)) {
-      throw new LimiteTondeuseException("La tondeuse est hors limite.");
+      throw new TondeuseLimiteException("La tondeuse est hors limite.");
     }
 
     tondeuseDTO.setPosX(nouvellePosX);
@@ -73,7 +74,8 @@ public class TondeuseServiceImpl implements TondeuseService {
 
   @Override
   public TondeuseDTO recupererTondeuse(Long id) {
-    return tondeusePersistence.recupererTondeuse(id);
+    return ofNullable(tondeusePersistence.recupererTondeuse(id))
+            .orElseThrow(() -> new TondeuseNonTrouveeException("Tondeuse non trouvée"));
   }
 
   private void verifieSiTondeuseDepasseZone(TondeuseDTO tondeuseDTO) {

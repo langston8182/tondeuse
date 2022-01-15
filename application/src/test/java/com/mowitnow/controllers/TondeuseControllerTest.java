@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.OrientationEnum;
 import com.mowitnow.data.TondeuseDTO;
-import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.exceptions.TondeuseLimiteException;
+import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.ports.api.GrilleService;
 import com.mowitnow.ports.api.TondeuseService;
 import org.junit.Test;
@@ -23,7 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.mowitnow.data.DirectionEnum.GAUCHE;
 import static com.mowitnow.data.OrientationEnum.NORTH;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,10 +80,13 @@ public class TondeuseControllerTest {
     @Test
     public void initialiserTondeuse_HorsLimite_Erreur412() throws Exception {
         TondeuseDTO tondeuseDto = creerTondeuseDto();
+        GrilleDTO grilleDTO = creerGrilleDto();
+        given(grilleService.recupererGrille(1L))
+                .willReturn(grilleDTO);
         given(tondeuseService.initialiserTondeuse(tondeuseDto))
-                .willThrow(new LimiteTondeuseException("Hors limite"));
+                .willThrow(new TondeuseLimiteException("Hors limite"));
 
-        mockMvc.perform(post("/tondeuse")
+        mockMvc.perform(post("/tondeuse?idGrille=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tondeuseDto)))
@@ -104,6 +111,18 @@ public class TondeuseControllerTest {
     }
 
     @Test
+    public void pivoterTondeuseGauche_TondeuseNonTrouvee_LanceErreur204() throws Exception {
+        given(tondeuseService.recupererTondeuse(1L)).willThrow(new TondeuseNonTrouveeException("Tondeuse non trouvée"));
+
+        mockMvc.perform(put("/tondeuse/1/pivoter?direction=G")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        then(tondeuseService).should(never()).pivoterTondeuse(any(), any());
+    }
+
+    @Test
     public void avancerTondeuse1Cases() throws Exception {
         TondeuseDTO tondeuseDto = creerTondeuseDto()
                 .setId(1L);
@@ -123,12 +142,23 @@ public class TondeuseControllerTest {
     }
 
     @Test
+    public void avancerTondeuse_TondeuseNonTrouvee_LanceErreur204() throws Exception {
+        given(tondeuseService.recupererTondeuse(1L)).willThrow(new TondeuseNonTrouveeException("Tondeuse non trouvée"));
+
+        mockMvc.perform(put("/tondeuse/1/avancer?nombreCases=1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+    }
+
+    @Test
     public void avancerTondeuse_HorsLimite_Erreur412() throws Exception {
         TondeuseDTO tondeuseDto = creerTondeuseDto()
                 .setId(1L);
         given(tondeuseService.recupererTondeuse(1L)).willReturn(tondeuseDto);
         given(tondeuseService.avancerTondeuse(tondeuseDto, 1))
-                .willThrow(new LimiteTondeuseException("Hors limite."));
+                .willThrow(new TondeuseLimiteException("Hors limite."));
 
         mockMvc.perform(put("/tondeuse/1/avancer?nombreCases=1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -147,6 +177,17 @@ public class TondeuseControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)));
+    }
+
+    @Test
+    public void recupererTondeuse_TondeuseNonTrouvee_Erreur204() throws Exception {
+        given(tondeuseService.recupererTondeuse(1L))
+                .willThrow(new TondeuseNonTrouveeException("Tondeuse non trouvée"));
+
+        mockMvc.perform(get("/tondeuse/1/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
     private TondeuseDTO creerTondeuseDto() {

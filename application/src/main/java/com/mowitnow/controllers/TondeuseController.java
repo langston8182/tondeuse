@@ -3,7 +3,8 @@ package com.mowitnow.controllers;
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
-import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.exceptions.TondeuseLimiteException;
+import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.ports.api.GrilleService;
 import com.mowitnow.ports.api.TondeuseService;
 import org.springframework.http.HttpStatus;
@@ -29,17 +30,21 @@ public class TondeuseController {
             tondeuseDTO.setGrilleDTO(grilleDTO);
             TondeuseDTO resultat = tondeuseService.initialiserTondeuse(tondeuseDTO);
             return new ResponseEntity<>(resultat, HttpStatus.CREATED);
-        } catch(LimiteTondeuseException ex) {
+        } catch (TondeuseLimiteException ex) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, ex.getMessage(), ex);
         }
     }
 
     @PutMapping("/{id}/pivoter")
     public ResponseEntity<TondeuseDTO> pivoterTondeuse(@PathVariable Long id, @RequestParam String direction) {
-        TondeuseDTO tondeuseDTO = tondeuseService.recupererTondeuse(id);
-        TondeuseDTO resultat =
-                tondeuseService.pivoterTondeuse(tondeuseDTO, DirectionEnum.recupererDirectionParValeur(direction));
-        return new ResponseEntity<>(resultat, HttpStatus.OK);
+        try {
+            TondeuseDTO tondeuseDTO = tondeuseService.recupererTondeuse(id);
+            TondeuseDTO resultat =
+                    tondeuseService.pivoterTondeuse(tondeuseDTO, DirectionEnum.recupererDirectionParValeur(direction));
+            return new ResponseEntity<>(resultat, HttpStatus.OK);
+        } catch (TondeuseNonTrouveeException ex) {
+            throw  new ResponseStatusException(HttpStatus.NO_CONTENT, ex.getMessage(), ex);
+        }
     }
 
     @PutMapping("/{id}/avancer")
@@ -48,14 +53,20 @@ public class TondeuseController {
             TondeuseDTO tondeuseDTO = tondeuseService.recupererTondeuse(id);
             TondeuseDTO resultat = tondeuseService.avancerTondeuse(tondeuseDTO, nombreCases);
             return new ResponseEntity<>(resultat, HttpStatus.OK);
-        } catch (LimiteTondeuseException ex) {
+        } catch (TondeuseLimiteException ex) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, ex.getMessage(), ex);
+        } catch (TondeuseNonTrouveeException ex) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, ex.getMessage(), ex);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TondeuseDTO> recupererTondeuse(@PathVariable Long id) {
-        TondeuseDTO tondeuseDto = tondeuseService.recupererTondeuse(id);
-        return new ResponseEntity<>(tondeuseDto, HttpStatus.OK);
+        try {
+            TondeuseDTO tondeuseDto = tondeuseService.recupererTondeuse(id);
+            return new ResponseEntity<>(tondeuseDto, HttpStatus.OK);
+        } catch (TondeuseNonTrouveeException ex) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, ex.getMessage(), ex);
+        }
     }
 }

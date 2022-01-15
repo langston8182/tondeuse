@@ -2,7 +2,8 @@ package com.mowitnow.ports.service;
 
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
-import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.exceptions.TondeuseLimiteException;
+import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.exceptions.UtilisationException;
 import com.mowitnow.ports.spi.TondeusePersistence;
 import org.junit.Test;
@@ -86,6 +87,17 @@ public class TondeuseServiceImplTest {
         TondeuseDTO mut = sut.recupererTondeuse(1L);
 
         assertThat(mut).isEqualTo(tondeuseDTO);
+    }
+
+    @Test
+    public void recupererTondeuse_TondeuseNonTrouvee_LanceErreur() {
+        given(tondeusePersistence.recupererTondeuse(1L))
+                .willReturn(null);
+
+        Throwable throwable = catchThrowable(() -> sut.recupererTondeuse(1L));
+
+        assertThat(throwable).isNotNull()
+                .isExactlyInstanceOf(TondeuseNonTrouveeException.class);
     }
 
     @Test
@@ -226,7 +238,7 @@ public class TondeuseServiceImplTest {
         Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 3));
 
         assertThat(throwable).isNotNull()
-                .isExactlyInstanceOf(LimiteTondeuseException.class);
+                .isExactlyInstanceOf(TondeuseLimiteException.class);
         then(tondeusePersistence).should(never()).modifierTondeuse(any());
     }
 
@@ -254,7 +266,7 @@ public class TondeuseServiceImplTest {
         Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 3));
 
         assertThat(throwable).isNotNull()
-                .isExactlyInstanceOf(LimiteTondeuseException.class);
+                .isExactlyInstanceOf(TondeuseLimiteException.class);
         then(tondeusePersistence).should(never()).modifierTondeuse(any());
     }
 
@@ -282,7 +294,7 @@ public class TondeuseServiceImplTest {
         Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 4));
 
         assertThat(throwable).isNotNull()
-                .isExactlyInstanceOf(LimiteTondeuseException.class);
+                .isExactlyInstanceOf(TondeuseLimiteException.class);
         then(tondeusePersistence).should(never()).modifierTondeuse(any());
     }
 
@@ -310,7 +322,7 @@ public class TondeuseServiceImplTest {
         Throwable throwable = catchThrowable(() -> sut.avancerTondeuse(tondeuseDTO, 2));
 
         assertThat(throwable).isNotNull()
-                .isExactlyInstanceOf(LimiteTondeuseException.class);
+                .isExactlyInstanceOf(TondeuseLimiteException.class);
         then(tondeusePersistence).should(never()).modifierTondeuse(any());
     }
 

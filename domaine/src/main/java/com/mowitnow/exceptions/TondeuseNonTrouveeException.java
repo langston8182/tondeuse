@@ -1,12 +1,12 @@
 package com.mowitnow.exceptions;
 
 /**
- * Erreur en cas de dépassement de la limite de la grille
+ * Erreur lorsque la tondeuse n'à pas été trouvée
  */
-public class LimiteTondeuseException extends RuntimeException{
+public class TondeuseNonTrouveeException extends RuntimeException {
     private String message;
 
-    public LimiteTondeuseException(String message) {
+    public TondeuseNonTrouveeException(String message) {
         this.message = message;
     }
 

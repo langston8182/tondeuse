@@ -17,6 +17,7 @@ import java.util.Optional;
 
 import static com.mowitnow.data.OrientationEnum.EAST;
 import static com.mowitnow.data.OrientationEnum.NORTH;
+import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -93,6 +94,16 @@ public class TondeuseJpaAdapterTest {
         TondeuseDTO mut = sut.recupererTondeuse(1L);
 
         assertThat(mut).isEqualTo(tondeuseDto);
+    }
+
+    @Test
+    public void recupererTondeuse_TondeuseNonTrouvee_RetourneNull() {
+        given(tondeuseRepository.findById(1L))
+                .willReturn(empty());
+
+        TondeuseDTO mut = sut.recupererTondeuse(1L);
+
+        assertThat(mut).isNull();
     }
 
     private Grille creerGrille() {

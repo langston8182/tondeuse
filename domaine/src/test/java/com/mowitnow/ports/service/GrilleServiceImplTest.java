@@ -2,6 +2,7 @@ package com.mowitnow.ports.service;
 
 
 import com.mowitnow.data.GrilleDTO;
+import com.mowitnow.exceptions.GrilleNonTrouveeException;
 import com.mowitnow.ports.spi.GrillePersistence;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -41,6 +43,17 @@ public class GrilleServiceImplTest {
     GrilleDTO mut = sut.recupererGrille(1L);
 
     assertThat(mut).isEqualTo(grilleDTO);
+  }
+
+  @Test
+  public void recupererGrille_GrilleNonTrouvee_LanceErreur() {
+    given(grillePersistence.recupererGrille(1L))
+            .willReturn(null);
+
+    Throwable throwable = catchThrowable(() -> sut.recupererGrille(1L));
+
+    assertThat(throwable).isNotNull()
+            .isExactlyInstanceOf(GrilleNonTrouveeException.class);
   }
 
   private GrilleDTO creerGrilleDto() {

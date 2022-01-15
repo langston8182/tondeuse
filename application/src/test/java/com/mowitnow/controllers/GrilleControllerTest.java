@@ -56,11 +56,12 @@ public class GrilleControllerTest {
         given(grilleService.initialiserGrille(grilleDto))
                 .willReturn(grilleDtoAvecId);
 
-        mockMvc.perform(post("/grille")
+        mockMvc.perform(post("/grille?posX=4&posY=4")
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(grilleDto)))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.dimX", equalTo(5)))
+                .andExpect(jsonPath("$.dimY", equalTo(5)))
                 .andExpect(jsonPath("$.id", equalTo(1)));
     }
 }
