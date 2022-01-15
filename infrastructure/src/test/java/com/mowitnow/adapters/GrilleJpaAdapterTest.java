@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -37,6 +38,18 @@ public class GrilleJpaAdapterTest {
         GrilleDTO mut = sut.initialiserGrille(grilleDto);
 
         assertThat(mut).isEqualTo(grilleDtoAvecId);
+    }
+
+    @Test
+    public void recupererGrille_Nominal() {
+        GrilleDTO grilleDTO = creerGrilleDto();
+        Grille grille = creerGrille();
+        given(grilleRepository.findById(1L)).willReturn(of(grille));
+        given(grilleMapper.mapVersGrilleDto(grille)).willReturn(grilleDTO);
+
+        GrilleDTO mut = sut.recupererGrille(1L);
+
+        assertThat(mut).isEqualTo(grilleDTO);
     }
 
     private Grille creerGrille() {

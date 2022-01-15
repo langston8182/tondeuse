@@ -14,4 +14,12 @@ public interface GrilleService {
    * @return La grille avec les dimensions X et Y.
    */
   GrilleDTO initialiserGrille(GrilleDTO grilleDTO);
+
+  /**
+   * Récupère une grille selon son identifiant.
+   *
+   * @param id L'identifiant de la grille
+   * @return La grille récupérée
+   */
+  GrilleDTO recupererGrille(Long id);
 }

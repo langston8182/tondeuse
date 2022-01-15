@@ -15,4 +15,9 @@ public class GrilleServiceImpl implements GrilleService {
   public GrilleDTO initialiserGrille(GrilleDTO grilleDTO) {
     return grillePersistence.initialiserGrille(grilleDTO);
   }
+
+  @Override
+  public GrilleDTO recupererGrille(Long id) {
+    return grillePersistence.recupererGrille(id);
+  }
 }

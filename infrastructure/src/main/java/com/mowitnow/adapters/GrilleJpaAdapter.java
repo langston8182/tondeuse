@@ -1,10 +1,13 @@
 package com.mowitnow.adapters;
 
 import com.mowitnow.data.GrilleDTO;
+import com.mowitnow.entities.Grille;
 import com.mowitnow.mappers.GrilleMapper;
 import com.mowitnow.ports.spi.GrillePersistence;
 import com.mowitnow.repositories.GrilleRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
@@ -23,6 +26,13 @@ public class GrilleJpaAdapter implements GrillePersistence {
     return ofNullable(grilleDTO)
             .map(grilleMapper::mapVersGrille)
             .map(grilleRepository::save)
+            .map(grilleMapper::mapVersGrilleDto)
+            .orElse(new GrilleDTO());
+  }
+
+  @Override
+  public GrilleDTO recupererGrille(Long id) {
+    return grilleRepository.findById(id)
             .map(grilleMapper::mapVersGrilleDto)
             .orElse(new GrilleDTO());
   }

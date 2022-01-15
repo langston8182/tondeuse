@@ -11,6 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GrilleServiceImplTest {
@@ -30,6 +31,16 @@ public class GrilleServiceImplTest {
     GrilleDTO mut = sut.initialiserGrille(grilleDTO);
 
     assertThat(mut).isEqualTo(grilleDtoAvecId);
+  }
+
+  @Test
+  public void recupererGrille_Nominal() {
+    GrilleDTO grilleDTO = creerGrilleDtoAvecId();
+    given(grillePersistence.recupererGrille(1L)).willReturn(grilleDTO);
+
+    GrilleDTO mut = sut.recupererGrille(1L);
+
+    assertThat(mut).isEqualTo(grilleDTO);
   }
 
   private GrilleDTO creerGrilleDto() {

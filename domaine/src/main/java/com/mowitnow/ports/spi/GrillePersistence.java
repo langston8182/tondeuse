@@ -14,4 +14,12 @@ public interface GrillePersistence {
    * @return La grille enregistrée
    */
   GrilleDTO initialiserGrille(GrilleDTO grilleDTO);
+
+  /**
+   * Récupère une grille selon son identifiant.
+   *
+   * @param id L'identifiant de la grille
+   * @return La grille récupérée
+   */
+  GrilleDTO recupererGrille(Long id);
 }
