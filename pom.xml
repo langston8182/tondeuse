@@ -12,6 +12,7 @@
         <module>domaine</module>
         <module>infrastructure</module>
         <module>application</module>
+        <module>ms-launcher</module>
     </modules>
 
     <properties>
