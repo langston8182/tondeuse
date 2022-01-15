@@ -5,6 +5,7 @@ import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.OrientationEnum;
 import com.mowitnow.data.TondeuseDTO;
 import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.ports.api.GrilleService;
 import com.mowitnow.ports.api.TondeuseService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +41,14 @@ public class TondeuseControllerTest {
     @MockBean
     private TondeuseService tondeuseService;
 
+    @MockBean
+    private GrilleService grilleService;
+
     @Configuration
-    @ComponentScan(basePackageClasses = {TondeuseService.class, TondeuseController.class},
+    @ComponentScan(basePackageClasses = {TondeuseService.class, TondeuseController.class, GrilleService.class},
             useDefaultFilters = false, includeFilters = {
             @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-                    classes = {TondeuseService.class, TondeuseController.class})})
+                    classes = {TondeuseService.class, TondeuseController.class, GrilleService.class})})
     public static class TestConfiguration {
         //
     }
@@ -54,15 +58,19 @@ public class TondeuseControllerTest {
         TondeuseDTO tondeuseDto = creerTondeuseDto();
         TondeuseDTO tondeuseDtoAvecId = creerTondeuseDto()
                 .setId(2L);
+        GrilleDTO grilleDTO = creerGrilleDto();
         given(tondeuseService.initialiserTondeuse(tondeuseDto))
                 .willReturn(tondeuseDtoAvecId);
+        given(grilleService.recupererGrille(1L))
+                .willReturn(grilleDTO);
 
-        mockMvc.perform(post("/tondeuse")
+        mockMvc.perform(post("/tondeuse?idGrille=1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tondeuseDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", equalTo(2)));
+                .andExpect(jsonPath("$.id", equalTo(2)))
+                .andExpect(jsonPath("$.grilleDTO.id", equalTo(1)));
     }
 
     @Test
@@ -142,15 +150,19 @@ public class TondeuseControllerTest {
     }
 
     private TondeuseDTO creerTondeuseDto() {
-        GrilleDTO grilleDto = new GrilleDTO()
-                .setId(1L)
-                .setDimY(5)
-                .setDimX(5);
+        GrilleDTO grilleDto = creerGrilleDto();
         return new TondeuseDTO()
                 .setOrientation(NORTH)
                 .setPosX(1)
                 .setPosY(1)
                 .setGrilleDTO(grilleDto);
+    }
+
+    private GrilleDTO creerGrilleDto() {
+        return new GrilleDTO()
+                .setId(1L)
+                .setDimY(5)
+                .setDimX(5);
     }
 
 }

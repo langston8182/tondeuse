@@ -1,8 +1,10 @@
 package com.mowitnow.controllers;
 
 import com.mowitnow.data.DirectionEnum;
+import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
 import com.mowitnow.exceptions.LimiteTondeuseException;
+import com.mowitnow.ports.api.GrilleService;
 import com.mowitnow.ports.api.TondeuseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +15,18 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/tondeuse")
 public class TondeuseController {
     private final TondeuseService tondeuseService;
+    private final GrilleService grilleService;
 
-    public TondeuseController(TondeuseService tondeuseService) {
+    public TondeuseController(TondeuseService tondeuseService, GrilleService grilleService) {
         this.tondeuseService = tondeuseService;
+        this.grilleService = grilleService;
     }
 
     @PostMapping
-    public ResponseEntity<TondeuseDTO> initialiserTondeuse(@RequestBody TondeuseDTO tondeuseDTO) {
+    public ResponseEntity<TondeuseDTO> initialiserTondeuse(@RequestParam Long idGrille, @RequestBody TondeuseDTO tondeuseDTO) {
         try {
+            GrilleDTO grilleDTO = grilleService.recupererGrille(idGrille);
+            tondeuseDTO.setGrilleDTO(grilleDTO);
             TondeuseDTO resultat = tondeuseService.initialiserTondeuse(tondeuseDTO);
             return new ResponseEntity<>(resultat, HttpStatus.CREATED);
         } catch(LimiteTondeuseException ex) {
