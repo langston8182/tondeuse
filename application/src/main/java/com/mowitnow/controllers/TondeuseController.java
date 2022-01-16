@@ -3,6 +3,7 @@ package com.mowitnow.controllers;
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.GrilleNonTrouveeException;
 import com.mowitnow.exceptions.TondeuseLimiteException;
 import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.ports.api.GrilleService;
@@ -31,6 +32,8 @@ public class TondeuseController {
             TondeuseDTO resultat = tondeuseService.initialiserTondeuse(tondeuseDTO);
             return new ResponseEntity<>(resultat, HttpStatus.CREATED);
         } catch (TondeuseLimiteException ex) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, ex.getMessage(), ex);
+        } catch (GrilleNonTrouveeException ex) {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, ex.getMessage(), ex);
         }
     }
