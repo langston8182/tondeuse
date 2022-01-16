@@ -1,0 +1,1169 @@
+{
+	"info": {
+		"_postman_id": "561bdf45-240d-43e2-ae53-db195d582502",
+		"name": "MowItNow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Scénario 1",
+			"item": [
+				{
+					"name": "Initialiser grille 6x6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.dimX).to.eql(6);",
+									"    pm.expect(jsonData.dimY).to.eql(6);",
+									"    var idGrille = jsonData.id;",
+									"    pm.globals.set(\"idGrille\", idGrille);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/grille?posX=5&posY=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"grille"
+							],
+							"query": [
+								{
+									"key": "posX",
+									"value": "5"
+								},
+								{
+									"key": "posY",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Initialiser grille"
+					},
+					"response": []
+				},
+				{
+					"name": "Initialiser tondeuse",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"NORTH\");",
+									"    pm.expect(jsonData.id).not.equal(undefined);",
+									"    var idTondeuse = jsonData.id;",
+									"    pm.globals.set(\"idTondeuse\", idTondeuse);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"posX\": 1,\n    \"posY\": 2,\n    \"orientation\": \"NORTH\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse?idGrille={{idGrille}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse"
+							],
+							"query": [
+								{
+									"key": "idGrille",
+									"value": "{{idGrille}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter gauche",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"WEST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=G",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "G"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(0);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"WEST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter gauche",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(0);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"SOUTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=G",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "G"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(0);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"SOUTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter gauche",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(0);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=G",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "G"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter gauche",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"NORTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=G",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "G"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"NORTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(1);",
+									"    pm.expect(jsonData.posY).to.eql(3);",
+									"    pm.expect(jsonData.orientation).to.eql(\"NORTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scénario 2",
+			"item": [
+				{
+					"name": "Initialiser grille 6x6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.dimX).to.eql(6);",
+									"    pm.expect(jsonData.dimY).to.eql(6);",
+									"    var idGrille = jsonData.id;",
+									"    pm.globals.set(\"idGrille\", idGrille);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/grille?posX=5&posY=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"grille"
+							],
+							"query": [
+								{
+									"key": "posX",
+									"value": "5"
+								},
+								{
+									"key": "posY",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Initialiser grille"
+					},
+					"response": []
+				},
+				{
+					"name": "Initialiser tondeuse",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(3);",
+									"    pm.expect(jsonData.posY).to.eql(3);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"    pm.expect(jsonData.id).not.equal(undefined);",
+									"    var idTondeuse = jsonData.id;",
+									"    pm.globals.set(\"idTondeuse\", idTondeuse);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"posX\": 3,\n    \"posY\": 3,\n    \"orientation\": \"EAST\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse?idGrille={{idGrille}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse"
+							],
+							"query": [
+								{
+									"key": "idGrille",
+									"value": "{{idGrille}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(4);",
+									"    pm.expect(jsonData.posY).to.eql(3);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(3);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter droite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(3);",
+									"    pm.expect(jsonData.orientation).to.eql(\"SOUTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=D",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(2);",
+									"    pm.expect(jsonData.orientation).to.eql(\"SOUTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"SOUTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter droite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"WEST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=D",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(4);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"WEST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter droite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(4);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"NORTH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=D",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pivoter droite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(4);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/pivoter?direction=D",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"pivoter"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Avancer 1 case",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Test reponse\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.posX).to.eql(5);",
+									"    pm.expect(jsonData.posY).to.eql(1);",
+									"    pm.expect(jsonData.orientation).to.eql(\"EAST\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tondeuse/{{idTondeuse}}/avancer?nombreCases=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tondeuse",
+								"{{idTondeuse}}",
+								"avancer"
+							],
+							"query": [
+								{
+									"key": "nombreCases",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
