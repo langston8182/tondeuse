@@ -37,7 +37,7 @@ public class ApiController {
     private final GrilleService grilleService;
     private final TondeuseService tondeuseService;
     private GrilleDTO grilleDtoEnregistre;
-    private final List<TondeuseDTO> tondeuseDTOS = new ArrayList<>();
+    private List<TondeuseDTO> tondeuseDTOS;
 
     public ApiController(GrilleService grilleService, TondeuseService tondeuseService) {
         this.grilleService = grilleService;
@@ -49,6 +49,7 @@ public class ApiController {
     public ResponseEntity<List<TondeuseDTO>> chargerFichier(
             @ApiParam("Fichier contenant l'itnitialisation de la grille, du ou des tondeuses, ainsi que tous les mouvements")
             @RequestParam("fichier") MultipartFile fichier) throws IOException {
+        tondeuseDTOS = new ArrayList<>();
         try {
             new BufferedReader(new InputStreamReader(fichier.getInputStream()))
                     .lines()

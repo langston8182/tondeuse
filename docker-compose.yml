@@ -1,0 +1,8 @@
+version: '3.1'
+
+services:
+  tondeuse:
+    image: public.ecr.aws/x6v4v9b3/tondeuse:latest
+    container_name: tondeuse
+    ports:
+      - 8080:8080
