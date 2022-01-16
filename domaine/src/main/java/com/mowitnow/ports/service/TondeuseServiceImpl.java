@@ -3,6 +3,7 @@ package com.mowitnow.ports.service;
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.OrientationEnum;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.DirectionNonTrouveeException;
 import com.mowitnow.exceptions.TondeuseLimiteException;
 import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.exceptions.UtilisationException;
@@ -105,6 +106,9 @@ public class TondeuseServiceImpl implements TondeuseService {
       case DROITE:
         nouvelleValeur = (orientationEnum.getValeur() + 90) % 360;
         break;
+
+      default:
+        throw new DirectionNonTrouveeException("Direction inexistante");
     }
     return nouvelleValeur == 0 ? 360 : nouvelleValeur;
   }

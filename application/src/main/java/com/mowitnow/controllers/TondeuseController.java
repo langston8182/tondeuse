@@ -3,6 +3,7 @@ package com.mowitnow.controllers;
 import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.DirectionNonTrouveeException;
 import com.mowitnow.exceptions.GrilleNonTrouveeException;
 import com.mowitnow.exceptions.TondeuseLimiteException;
 import com.mowitnow.exceptions.TondeuseNonTrouveeException;
@@ -39,7 +40,7 @@ public class TondeuseController {
                     message = "Grille inexistante ou la tondeuse est en dehors des limites de la grille")
     })
     public ResponseEntity<TondeuseDTO> initialiserTondeuse(
-            @ApiParam("Identifiant de la grille")
+            @ApiParam(value = "Identifiant de la grille", example = "1")
             @RequestParam Long idGrille,
             @ApiParam("Tondeuse à initialiser")
             @RequestBody TondeuseDTO tondeuseDTO) {
@@ -62,7 +63,7 @@ public class TondeuseController {
             @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Tondeuse inexistante")
     })
     public ResponseEntity<TondeuseDTO> pivoterTondeuse(
-            @ApiParam("Identifiant de la tondeuse")
+            @ApiParam(value = "Identifiant de la tondeuse", example = "1")
             @PathVariable Long id,
             @ApiParam("Direction de la tondeuse : gauche (G) ou droite (D)")
             @RequestParam String direction) {
@@ -73,6 +74,8 @@ public class TondeuseController {
             return new ResponseEntity<>(resultat, HttpStatus.OK);
         } catch (TondeuseNonTrouveeException ex) {
             throw new ResponseStatusException(HttpStatus.NO_CONTENT, ex.getMessage(), ex);
+        } catch (DirectionNonTrouveeException ex) {
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, ex.getMessage(), ex);
         }
     }
 
@@ -84,9 +87,9 @@ public class TondeuseController {
             @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Tondeuse inexistante")
     })
     public ResponseEntity<TondeuseDTO> avancerTondeuse(
-            @ApiParam("Identifiant de la tondeuse")
+            @ApiParam(value = "Identifiant de la tondeuse", example = "1")
             @PathVariable Long id,
-            @PathParam("Nombre de case à avancer")
+            @ApiParam(value = "Nombre de case à avancer", example = "3")
             @RequestParam int nombreCases) {
         try {
             TondeuseDTO tondeuseDTO = tondeuseService.recupererTondeuse(id);
@@ -106,7 +109,7 @@ public class TondeuseController {
             @ApiResponse(code = HttpServletResponse.SC_NO_CONTENT, message = "Tondeuse inexistante")
     })
     public ResponseEntity<TondeuseDTO> recupererTondeuse(
-            @ApiParam("Identifiant de la tondeuse")
+            @ApiParam(value = "Identifiant de la tondeuse", example = "1")
             @PathVariable Long id) {
         try {
             TondeuseDTO tondeuseDto = tondeuseService.recupererTondeuse(id);

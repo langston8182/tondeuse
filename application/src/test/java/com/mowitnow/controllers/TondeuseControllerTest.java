@@ -1,9 +1,11 @@
 package com.mowitnow.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mowitnow.data.DirectionEnum;
 import com.mowitnow.data.GrilleDTO;
 import com.mowitnow.data.OrientationEnum;
 import com.mowitnow.data.TondeuseDTO;
+import com.mowitnow.exceptions.DirectionNonTrouveeException;
 import com.mowitnow.exceptions.TondeuseLimiteException;
 import com.mowitnow.exceptions.TondeuseNonTrouveeException;
 import com.mowitnow.ports.api.GrilleService;
@@ -108,6 +110,17 @@ public class TondeuseControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orientation", equalTo("WEST")));
+    }
+
+    @Test
+    public void pivoterTondeuse_DirectionNonTrouvee_LanceErreur412() throws Exception {
+        given(tondeuseService.pivoterTondeuse(any(TondeuseDTO.class), any(DirectionEnum.class)))
+                .willThrow(new DirectionNonTrouveeException("Direction non trouvée"));
+
+        mockMvc.perform(put("/tondeuse/1/pivoter?direction=T")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isPreconditionFailed());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.mowitnow.data;
 
+import com.mowitnow.exceptions.DirectionNonTrouveeException;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -19,6 +20,6 @@ public enum DirectionEnum {
         return Arrays.stream(DirectionEnum.values())
                 .filter(directionEnum -> directionEnum.getValeur().equals(valeur))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("La direction n'existe pas."));
+                .orElseThrow(() -> new DirectionNonTrouveeException("La direction n'existe pas."));
     }
 }

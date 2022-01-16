@@ -24,9 +24,9 @@ public class GrilleController {
     @ApiOperation("Initialise une grille en fournissant en paramètre la position X et Y du coin supérieur droit")
     @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Retourne la grille crée avec un identifiant")
     public ResponseEntity<GrilleDTO> initialiserGrille(
-            @ApiParam("Position X du coin supérieur droit")
+            @ApiParam(value = "Position X du coin supérieur droit", example = "5")
             @RequestParam int posX,
-            @ApiParam("Position Y du coin supérieur droit")
+            @ApiParam(value = "Position Y du coin supérieur droit", example = "5")
             @RequestParam int posY) {
         GrilleDTO grilleDTO = new GrilleDTO()
                 .setDimX(posX + 1)
